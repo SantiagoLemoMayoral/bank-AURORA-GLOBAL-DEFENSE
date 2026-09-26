@@ -1,0 +1,142 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+
+metadata:
+  name: cache-aws
+
+spec:
+
+  compositeTypeRef:
+    apiVersion: platform.bank.io/v1alpha1
+    kind: Cache
+
+  mode: Pipeline
+
+  pipeline:
+
+    - step: create-cache-resources
+
+      functionRef:
+        name: function-patch-and-transform
+
+      input:
+        apiVersion: pt.fn.crossplane.io/v1beta1
+        kind: Resources
+
+        resources:
+          - name: cache-subnet-group
+
+            base:
+              apiVersion: elasticache.aws.upbound.io/v1beta1
+              kind: SubnetGroup
+
+              metadata:
+                name: placeholder
+
+              spec:
+
+                forProvider:
+                  region: us-east-1
+
+                  description: Managed by Crossplane
+
+                  subnetIds:
+                    - subnet-aaa
+                    - subnet-bbb
+
+                providerConfigRef:
+                  name: default
+
+            patches:
+
+              - type: FromCompositeFieldPath
+
+                fromFieldPath: metadata.name
+
+                toFieldPath: metadata.name
+
+                transforms:
+                  - type: string
+                    string:
+                      type: Format
+                      fmt: "%s-subnets"
+
+              - type: FromCompositeFieldPath
+
+                fromFieldPath: spec.region
+
+                toFieldPath: spec.forProvider.region
+
+          - name: cache
+
+            base:
+              apiVersion: elasticache.aws.upbound.io/v1beta1
+              kind: ReplicationGroup
+
+              metadata:
+                name: placeholder
+
+              spec:
+
+                forProvider:
+
+                  region: us-east-1
+
+                  engine: redis
+
+                  nodeType: cache.t3.micro
+
+                  description: Managed by Crossplane
+
+                  numCacheClusters: 1
+
+                  automaticFailoverEnabled: false
+
+                providerConfigRef:
+                  name: default
+
+            patches:
+
+              - type: FromCompositeFieldPath
+
+                fromFieldPath: metadata.name
+
+                toFieldPath: metadata.name
+
+
+              - type: FromCompositeFieldPath
+
+                fromFieldPath: spec.region
+
+                toFieldPath: spec.forProvider.region
+                
+
+              - type: FromCompositeFieldPath
+
+                fromFieldPath: spec.engine
+
+                toFieldPath: spec.forProvider.engine
+
+
+              - type: FromCompositeFieldPath
+
+                fromFieldPath: spec.replicas
+
+                toFieldPath: spec.forProvider.numCacheClusters
+
+
+
+              - type: FromCompositeFieldPath
+
+                fromFieldPath: spec.size
+
+                toFieldPath: spec.forProvider.nodeType
+
+                transforms:
+
+                  - type: map
+
+                    map:
+                      small: cache.t3.micro
+                      medium: cache.t3.small
+                      large: cache.t3.medium

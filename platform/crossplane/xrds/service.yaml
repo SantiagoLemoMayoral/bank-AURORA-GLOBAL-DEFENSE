@@ -1,0 +1,51 @@
+apiVersion: apiextensions.crossplane.io/v2
+kind: CompositeResourceDefinition
+
+metadata:
+  name: environments.platform.bank.io
+
+spec:
+  group: platform.bank.io
+
+  names:
+    kind: Environment
+    plural: environments
+
+  versions:
+    - name: v1alpha1
+      served: true
+      referenceable: true
+
+      schema:
+        openAPIV3Schema:
+          type: object
+
+          properties:
+            spec:
+              type: object
+
+              properties:
+                region:
+                  type: string
+                  enum:
+                    - us-east-1
+                    - us-east-2
+                    - eu-west-1
+
+                networkSize:
+                  type: string
+                  enum:
+                    - small
+                    - medium
+                    - large
+
+                availability:
+                  type: string
+                  enum:
+                    - standard
+                    - high
+
+              required:
+                - region
+                - networkSize
+                - availability

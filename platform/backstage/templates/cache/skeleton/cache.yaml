@@ -1,0 +1,12 @@
+apiVersion: platform.bank.io/v1alpha1
+kind: Cache
+
+metadata:
+  name: ${{ values.name }}
+
+spec:
+  region: ${{ values.region }}
+  size: ${{ values.size }}
+  engine: ${{ values.engine }}
+  replicas: ${{ values.replicas }}
+  environment: ${{ values.environment }}

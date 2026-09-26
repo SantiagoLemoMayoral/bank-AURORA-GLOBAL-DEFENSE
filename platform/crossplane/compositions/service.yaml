@@ -1,0 +1,41 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+
+metadata:
+  name: environment-aws
+
+spec:
+
+  compositeTypeRef:
+    apiVersion: platform.bank.io/v1alpha1
+    kind: Environment
+
+  mode: Pipeline
+
+  pipeline:
+    - step: create-resources
+
+      functionRef:
+        name: function-patch-and-transform
+
+      input:
+        apiVersion: pt.fn.crossplane.io/v1beta1
+        kind: Resources
+
+        resources:
+
+          - name: vpc
+
+            base:
+              apiVersion: ec2.aws.m.upbound.io/v1beta1
+              kind: VPC
+
+              spec:
+                forProvider:
+                  region: us-east-1
+                  cidrBlock: 10.0.0.0/16
+
+            patches:
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.region
+                toFieldPath: spec.forProvider.region

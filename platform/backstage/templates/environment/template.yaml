@@ -1,0 +1,39 @@
+if the apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+
+metadata:
+  name: create-environment
+  title: Create Environment
+
+spec:
+  owner: platform-team
+  type: infrastructure
+
+  parameters:
+    - title: Environment configuration
+
+      required:
+        - name
+        - region
+        - networkSize
+
+      properties:
+        name:
+          title: Environment Name
+          type: string
+
+        region:
+          title: AWS Region
+          type: string
+          enum:
+            - us-east-1
+            - us-east-2
+            - eu-west-1
+
+        networkSize:
+          title: Network Size
+          type: string
+          enum:
+            - small
+            - medium
+            - large

@@ -1,0 +1,11 @@
+# skeleton/environment.yaml
+
+apiVersion: platform.bank.io/v1alpha1
+kind: Environment
+
+metadata:
+  name: ${{ values.name }}
+
+spec:
+  region: ${{ values.region }}
+  networkSize: ${{ values.networkSize }}

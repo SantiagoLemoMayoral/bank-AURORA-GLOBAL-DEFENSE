@@ -1,0 +1,53 @@
+apiVersion: apiextensions.crossplane.io/v2
+kind: CompositeResourceDefinition
+
+metadata:
+  name: xenvironments.platform.helpdesk.io
+
+spec:
+  scope: Namespaced
+
+  group: platform.helpdesk.io
+
+  names:
+    kind: XEnvironment
+    plural: xenvironments
+
+  versions:
+    - name: v1alpha1
+      served: true
+      referenceable: true
+
+      schema:
+        openAPIV3Schema:
+          type: object
+
+          properties:
+            spec:
+              type: object
+
+              properties:
+                environment:
+                  type: string
+                  enum:
+                    - dev
+                    - staging
+                    - prod
+
+                region:
+                  type: string
+                  enum:
+                    - us-east-1
+                    - us-east-2
+
+                networkCidr:
+                  type: string
+
+                subnetCidr:
+                  type: string
+
+              required:
+                - environment
+                - region
+                - networkCidr
+                - subnetCidr

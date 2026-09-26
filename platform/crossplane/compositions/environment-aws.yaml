@@ -1,0 +1,90 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+
+metadata:
+  name: environment-aws
+
+spec:
+
+  # THE LINK TO THE XRD
+  compositeTypeRef:
+    apiVersion: platform.helpdesk.io/v1alpha1
+    kind: XEnvironment
+
+  mode: Pipeline
+
+  pipeline:
+    - step: create-environment
+      functionRef:
+        name: function-patch-and-transform
+
+      input:
+        apiVersion: pt.fn.crossplane.io/v1beta1
+        kind: Resources
+
+        resources:
+
+          # -------------------------
+          # VPC
+          # -------------------------
+          - name: vpc
+
+            base:
+              apiVersion: ec2.aws.m.upbound.io/v1beta1
+              kind: VPC
+
+              spec:
+                forProvider:
+                  region: us-east-1
+                  cidrBlock: 10.0.0.0/16
+
+                  enableDnsSupport: true
+                  enableDnsHostnames: true
+
+                providerConfigRef:
+                  name: default
+
+            patches:
+
+              # XR.spec.region → VPC region
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.region
+                toFieldPath: spec.forProvider.region
+
+              # XR.spec.networkCidr → VPC CIDR
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.networkCidr
+                toFieldPath: spec.forProvider.cidrBlock
+
+
+          # -------------------------
+          # SUBNET
+          # -------------------------
+          - name: subnet
+
+            base:
+              apiVersion: ec2.aws.m.upbound.io/v1beta1
+              kind: Subnet
+
+              spec:
+                forProvider:
+                  region: us-east-1
+                  cidrBlock: 10.0.1.0/24
+
+                  vpcIdSelector:
+                    matchControllerRef: true
+
+                providerConfigRef:
+                  name: default
+
+            patches:
+
+              # XR.spec.region → Subnet region
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.region
+                toFieldPath: spec.forProvider.region
+
+              # XR.spec.subnetCidr → Subnet CIDR
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.subnetCidr
+                toFieldPath: spec.forProvider.cidrBlock
