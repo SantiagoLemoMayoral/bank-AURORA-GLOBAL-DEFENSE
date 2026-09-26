@@ -95,7 +95,7 @@ spec:
       action: publish:github:pull-request
 
       input:
-        repoUrl: github.com?owner=YOUR_ORG&repo=YOUR_GITOPS_REPO
+        repoUrl: repoUrl: github.com?owner=SantiagoLemoMayoral&repo=bank-AURORA-GLOBAL-DEFENSE
 
         branchName: create-cache-${{ parameters.name }}
         targetBranchName: main

@@ -9,7 +9,7 @@ spec:
   project: platform
 
   source:
-    repoURL: https://github.com/SantiagoLemoMayoral/bank.git
+    repoURL: github.com/SantiagoLemoMayoral/bank-AURORA-GLOBAL-DEFENSE
     targetRevision: main
     path: gitops/environments/staging
 
