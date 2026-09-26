@@ -1,4 +1,4 @@
-apiVersion: apiextensions.crossplane.io/v1
+apiVersion: apiextensions.crossplane.io/v2
 kind: Composition
 
 metadata:
@@ -7,7 +7,7 @@ metadata:
 spec:
 
   compositeTypeRef:
-    apiVersion: platform.bank.io/v1alpha1
+    apiVersion: platform.bank.io/v2alpha1
     kind: Cache
 
   mode: Pipeline

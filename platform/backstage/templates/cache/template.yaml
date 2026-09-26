@@ -105,4 +105,4 @@ spec:
 
         sourcePath: rendered
 
-        targetPath: environments/${{ parameters.environment }}/${{ parameters.name }}
+       targetPath: gitops/environments/${{ parameters.environment }}/${{ parameters.name }}

@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+
+metadata:
+  name: crossplane-platform
+  namespace: argocd
+
+spec:
+  project: platform
+
+  source:
+    repoURL: https://github.com/SantiagoLemoMayoral/bank-AURORA-GLOBAL-DEFENSE.git
+    targetRevision: main
+    
+    path: platform/crossplane
+
+    directory:
+      recurse: true
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: crossplane-system
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+
+    syncOptions:
+      - CreateNamespace=true
