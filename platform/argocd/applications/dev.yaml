@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+
+metadata:
+  name: platform-dev
+  namespace: argocd
+
+spec:
+  project: platform
+
+  source:
+    repoURL: https://github.com/SantiagoLemoMayoral/bank.git
+    targetRevision: main
+    path: gitops/environments/dev
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: dev
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+
+    syncOptions:
+      - CreateNamespace=true

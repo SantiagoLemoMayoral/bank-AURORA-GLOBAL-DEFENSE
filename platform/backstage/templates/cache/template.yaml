@@ -10,9 +10,6 @@ spec:
   owner: platform-team
   type: infrastructure
 
-  # =========================================================
-  # GUI
-  # =========================================================
 
   parameters:
     - title: Cache Configuration
@@ -69,10 +66,10 @@ spec:
             - staging
             - prod
 
-
-  # =========================================================
-  # WHAT BACKSTAGE DOES AFTER SUBMIT
-  # =========================================================
+  spec:
+  parameters:
+    # GUI
+    ...
 
   steps:
 
@@ -82,6 +79,7 @@ spec:
 
       input:
         url: ./skeleton
+        targetPath: rendered
 
         values:
           name: ${{ parameters.name }}
@@ -90,3 +88,21 @@ spec:
           engine: ${{ parameters.engine }}
           replicas: ${{ parameters.replicas }}
           environment: ${{ parameters.environment }}
+
+
+    - id: publish
+      name: Publish Cache XR
+      action: publish:github:pull-request
+
+      input:
+        repoUrl: github.com?owner=YOUR_ORG&repo=YOUR_GITOPS_REPO
+
+        branchName: create-cache-${{ parameters.name }}
+        targetBranchName: main
+
+        title: Create cache ${{ parameters.name }}
+        commitMessage: Create cache ${{ parameters.name }}
+
+        sourcePath: rendered
+
+        targetPath: environments/${{ parameters.environment }}/${{ parameters.name }}
